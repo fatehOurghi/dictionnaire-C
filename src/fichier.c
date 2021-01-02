@@ -31,6 +31,8 @@ Texte lire_fichier(char *nom_fichier)
     texte.T = NULL;
     texte.L = NULL;
     texte.A = NULL;
+    texte.nombre_char = 0;
+    texte.nombre_lignes = 0;
     if (fichier != NULL)
     {
         int taille = taille_fichier(fichier);
