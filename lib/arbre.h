@@ -1,4 +1,4 @@
-
+#pragma once
 
 typedef struct noeud
 {
@@ -8,3 +8,7 @@ typedef struct noeud
     struct noeud *droit;
 } noeud;
 typedef noeud *ABR;
+
+
+
+

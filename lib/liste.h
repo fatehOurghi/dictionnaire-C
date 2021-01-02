@@ -1,9 +1,9 @@
-
+#pragma once
 
 typedef struct element
 {
     int ligne;
-    element *suiv;
+    struct element *suiv;
 } element;
 
 typedef element *Liste;
