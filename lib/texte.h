@@ -8,3 +8,7 @@ typedef struct Texte{
     int nombre_char;
     int nombre_lignes;
 }Texte;
+
+char* lire_mot(Texte texte, int *debut, int *ligne);
+
+int appartenir_alphabet(char c);

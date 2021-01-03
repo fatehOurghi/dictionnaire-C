@@ -7,7 +7,6 @@ typedef struct noeud
     int occurrence;
     Liste lignes;
     int hauteur;
-    struct noeud *parent;
     struct noeud *gauche;
     struct noeud *droit;
 } noeud;

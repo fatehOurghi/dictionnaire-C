@@ -23,8 +23,8 @@ void rotationGD(ABR A);
 
 void reequilibrer(ABR A);
 
-ABR creer_nouveau_noeud(char *mot, int occurence, int pre_citation, int hauteur);
+ABR creer_nouveau_noeud(char *mot, int occurrence, int pre_citation, int hauteur);
 
 void maj_noeud(ABR e, int ligne);
 
-void inserer_noeud(ABR A, ABR nouveau);
+ABR inserer_noeud(ABR A, ABR nouveau);

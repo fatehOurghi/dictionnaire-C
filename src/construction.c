@@ -1,14 +1,13 @@
-
+#include<stdio.h>
 #include "../lib/construction.h"
 #include "../lib/outils.h"
 
 // creer la racine de l'arbre
 ABR cree_ABR(char *mot, int ligne)
 {
-    ABR A = malloc(sizeof(ABR));
+    ABR A = malloc(sizeof(noeud));
     A->droit = NULL;
     A->gauche = NULL;
-    A->parent = NULL;
     A->mot = mot;
     A->lignes = creer_liste(ligne);
     A->occurrence = 1;
@@ -148,10 +147,11 @@ void reequilibrer(ABR A)
 
 ABR creer_nouveau_noeud(char *mot, int occurrence, int ligne, int hauteur)
 {
-    ABR e = malloc(sizeof(ABR));
+    ABR e = malloc(sizeof(noeud));
     e->droit = NULL;
     e->gauche = NULL;
-    e->mot = mot;
+    e->mot = malloc(strlen(mot));
+    strcpy(e->mot, mot);
     e->lignes = creer_liste(ligne);
     e->occurrence = occurrence;
     e->hauteur = hauteur;
@@ -164,7 +164,26 @@ void maj_noeud(ABR e, int ligne)
     ajouter_element(e->lignes, ligne);
 }
 
-void inserer_noeud(ABR A, ABR nouveau)
+ABR inserer_noeud(ABR A, ABR nouveau)
 {
+    /* 1. Effectuer l'insertion ABR normale */
+    if (A == NULL)
+    {
+        return nouveau;
+    }
+    if (comparer(A->mot, nouveau->mot) > 0)
+        A->gauche = inserer_noeud(A->gauche, nouveau);
+    else if (comparer(A->mot, nouveau->mot) < 0)
+        A->droit = inserer_noeud(A->droit, nouveau);
+    else // Egale
+    { 
+        maj_noeud(A, nouveau->lignes[0].ligne);
+        return A;
+    }
+    /* 2. Mettre à jour la hauteur de ce nœud ancêtre */
+    maj_Hauteur(A);
 
+    reequilibrer(A);
+
+    return A;
 }

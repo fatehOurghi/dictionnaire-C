@@ -43,7 +43,8 @@ Texte lire_fichier(char *nom_fichier)
         texte.L = (int *)malloc(n_lignes);
         char c;
         int indice = 0;
-        int ligne = 0;
+        texte.L[0] = 0;
+        int ligne = 1;
         while ((c = fgetc(fichier)) != EOF)
         {
             texte.T[indice++] = c;
