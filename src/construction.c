@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+
 #include "../lib/construction.h"
-#include "../lib/outils.h"
 
 // creer la racine de l'arbre
 ABR cree_ABR(char *mot, int ligne)
@@ -40,78 +40,14 @@ void maj_Hauteur(ABR A)
     }
 }
 
-int est_equilibreABR(ABR A)
-{
-    if (A == NULL)
-    {
-        return 1;
-    }
-    else
-    {
-        if (abs(get_hauteur(A->gauche) - get_hauteur(A->droit)) > 1)
-            return 0;
-        return est_equilibreABR(A->gauche) && est_equilibreABR(A->droit);
-    }
-}
-
 int desequilibre(ABR A)
 {
     if (A == NULL)
         return 0;
     return get_hauteur(A->gauche) - get_hauteur(A->droit);
 }
-ABR rotationG(ABR A)
-{
-    if (A != NULL)
-    {
-        if (A->droit == NULL)
-            return A;
-        ABR B = A->droit;
-        A->droit = B->gauche;
-        B->gauche = A;
-        maj_Hauteur(A);
-        maj_Hauteur(B);
-        return B;
-    }
-    return NULL;
-}
 
-ABR rotationD(ABR A)
-{
-    if (A != NULL)
-    {
-        if (A->gauche == NULL)
-            return A;
-        ABR B = A->gauche;
-        A->gauche = B->droit;
-        B->droit = A;
-        maj_Hauteur(A);
-        maj_Hauteur(B);
-        return B;
-    }
-    return NULL;
-}
-
-ABR rotationDG(ABR A)
-{
-    if (A->droit == NULL)
-        return NULL;
-
-    A->droit = rotationD(A->droit);
-    return rotationG(A);
-}
-
-ABR rotationGD(ABR A)
-{
-    if (A->gauche == NULL)
-        return NULL;
-
-    A->gauche = rotationG(A->gauche);
-    return rotationD(A);
-}
-
-
-ABR rightRotate(ABR y)
+ABR rotationDroite(ABR y)
 {
     ABR x = y->gauche;
     ABR T2 = x->droit;
@@ -128,7 +64,7 @@ ABR rightRotate(ABR y)
     return x;
 }
 
-ABR leftRotate(ABR x)
+ABR rotationGauche(ABR x)
 {
     ABR y = x->droit;
     ABR T2 = y->gauche;
@@ -145,7 +81,6 @@ ABR leftRotate(ABR x)
     return y;
 }
 
-
 ABR reequilibrer(ABR A, ABR nouveau)
 {
     /* Obtenez le facteur d'équilibre de cet ancêtre
@@ -155,24 +90,24 @@ ABR reequilibrer(ABR A, ABR nouveau)
 
     // cas: gauche gauche
     if (facteur > 1 && strcasecmp(A->gauche->mot, nouveau->mot) > 0)
-        return rightRotate(A);
+        return rotationDroite(A);
 
     // cas: droit droit
     if (facteur < -1 && strcasecmp(A->droit->mot, nouveau->mot) < 0)
-        return leftRotate(A);
+        return rotationGauche(A);
 
     // cas: gauche droit
     if (facteur > 1 && strcasecmp(A->gauche->mot, nouveau->mot) < 0)
     {
-        A->gauche = leftRotate(A->gauche);
-        return rightRotate(A);
+        A->gauche = rotationGauche(A->gauche);
+        return rotationDroite(A);
     }
 
     // cas: droit gauche
     if (facteur < -1 && strcasecmp(A->droit->mot, nouveau->mot) > 0)
     {
-        A->droit = rightRotate(A->droit);
-        return leftRotate(A);
+        A->droit = rotationDroite(A->droit);
+        return rotationGauche(A);
     }
     return A;
 }
@@ -195,8 +130,6 @@ void maj_noeud(ABR e, int ligne)
     ajouter_element(e->lignes, ligne);
 }
 
-
-
 ABR inserer_noeud(ABR A, ABR nouveau)
 {
     /* 1. Effectuer l'insertion ABR normale */
@@ -218,4 +151,26 @@ ABR inserer_noeud(ABR A, ABR nouveau)
                          get_hauteur(A->droit));
 
     return reequilibrer(A, nouveau);
+}
+
+Texte construirABR(char *nom_fichier, float* t_lire_fichier, float* t_construireABR){
+    chrono_reset();
+    Texte texte = lire_fichier(nom_fichier);
+    *t_lire_fichier = chrono_lap();
+
+    chrono_reset();
+	int debut = 0;
+	int ligne = 1;
+	char *premier = lire_mot(texte, &debut, &ligne);
+	texte.A = cree_ABR(premier, ligne);
+	while (1)
+	{
+		char *mot = lire_mot(texte, &debut, &ligne);
+		if (mot == NULL)
+			break;
+		ABR e = creer_nouveau_noeud(mot, 1, ligne, 0);
+		texte.A = inserer_noeud(texte.A, e);
+	}
+    *t_construireABR = chrono_lap();
+    return texte;
 }

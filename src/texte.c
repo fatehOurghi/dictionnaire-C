@@ -76,3 +76,5 @@ Texte remplir_texte(char *T, int *L, long n_car, int lignes)
     texte.nombre_lignes = lignes;
     return texte;
 }
+
+

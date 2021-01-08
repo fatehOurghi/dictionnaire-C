@@ -44,7 +44,7 @@ RM = rm -f
 MD	:= mkdir -p
 endif
 
-TXTFILE := file.txt
+TXTFILE := pg31469.txt
 
 # define any directories containing header files other than /usr/include
 INCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))

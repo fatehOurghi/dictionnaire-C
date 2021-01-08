@@ -3,6 +3,9 @@
 #include <string.h>
 #include "../lib/recherche.h"
 
+
+
+
 ABR rechercher_mot(ABR arbre, char *mot)
 {
     if (!arbre)
@@ -15,11 +18,16 @@ ABR rechercher_mot(ABR arbre, char *mot)
         return arbre;
 }
 
-void parcourInfixe(ABR arbre)
+
+void afficher_noeud(ABR e)
 {
-    if (arbre == NULL)
-        return;
-    parcourInfixe(arbre->gauche);
-    printf("mot = %s, \t\toccurrence = %d,\t hauteur= %d\n", arbre->mot, arbre->occurrence, arbre->hauteur);
-    parcourInfixe(arbre->droit);
+	printf("mot: \"%s\",  occurrence: %d\n", e->mot, e->occurrence);
+    printf("Les lignes qui contient ce mot:\n");
+	Liste p = e->lignes;
+	while (p != NULL)
+	{
+		printf("%d,", p->ligne);
+		p = p->suiv;
+	}
+	printf("\n-----------------------------------------------------------\n");
 }
