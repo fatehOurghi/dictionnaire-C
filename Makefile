@@ -1,7 +1,3 @@
-#
-# 'make'        build executable file 'dico'
-# 'make clean'  removes all .o and executable files
-#
 
 # define the C compiler to use
 CC = gcc
@@ -15,7 +11,7 @@ CFLAGS	:= -Wall -Wextra -g
 LFLAGS =
 
 # define output directory
-OUTPUT	:= output
+OUTPUT	:= .
 
 # define source directory
 SRC		:= src
@@ -66,8 +62,9 @@ OBJECTS		:= $(SOURCES:.c=.o)
 
 OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 
-all: $(OUTPUT) $(MAIN)
-	./$(OUTPUT)/$(MAIN) $(TXTFILE)
+# executer l'exemple de 1000 mots ici(2eme ligne)					
+all: $(OUTPUT) $(MAIN)				
+	$(OUTPUT)/$(MAIN) $(TXTFILE) uvsq discover shunned house gutenberg home et
 	@echo Executing 'all' complete!
 
 $(OUTPUT):
