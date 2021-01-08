@@ -1,4 +1,5 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <string.h>
 #include "../lib/construction.h"
 #include "../lib/outils.h"
 
@@ -57,92 +58,123 @@ int desequilibre(ABR A)
 {
     if (A == NULL)
         return 0;
-    return (get_hauteur(A->gauche) - get_hauteur(A->droit));
+    return get_hauteur(A->gauche) - get_hauteur(A->droit);
 }
-
-void rotationG(ABR A)
+ABR rotationG(ABR A)
 {
     if (A != NULL)
     {
-        if (A->gauche != NULL)
-        {
-            ABR B = A->gauche;
-            A->gauche = B->droit;
-            B->droit = A;
-            A = B;
-            maj_Hauteur(A->droit);
-            maj_Hauteur(A);
-        }
+        if (A->droit == NULL)
+            return A;
+        ABR B = A->droit;
+        A->droit = B->gauche;
+        B->gauche = A;
+        maj_Hauteur(A);
+        maj_Hauteur(B);
+        return B;
     }
+    return NULL;
 }
 
-void rotationD(ABR A)
+ABR rotationD(ABR A)
 {
     if (A != NULL)
     {
-        if (A->droit != NULL)
-        {
-            ABR B = A->droit;
-            A->droit = B->gauche;
-            B->gauche = A;
-            A = B;
-            maj_Hauteur(A->gauche);
-            maj_Hauteur(A);
-        }
+        if (A->gauche == NULL)
+            return A;
+        ABR B = A->gauche;
+        A->gauche = B->droit;
+        B->droit = A;
+        maj_Hauteur(A);
+        maj_Hauteur(B);
+        return B;
     }
+    return NULL;
 }
 
-void rotationDG(ABR A)
+ABR rotationDG(ABR A)
 {
-    if (A != NULL)
-        if (A->droit != NULL)
-        {
-            rotationD(A->droit);
-            rotationG(A);
-        }
+    if (A->droit == NULL)
+        return NULL;
+
+    A->droit = rotationD(A->droit);
+    return rotationG(A);
 }
 
-void rotationGD(ABR A)
+ABR rotationGD(ABR A)
 {
-    if (A != NULL)
-        if (A->gauche != NULL)
-        {
-            rotationG(A->droit);
-            rotationD(A);
-        }
+    if (A->gauche == NULL)
+        return NULL;
+
+    A->gauche = rotationG(A->gauche);
+    return rotationD(A);
 }
 
-void reequilibrer(ABR A)
+
+ABR rightRotate(ABR y)
 {
-    if (A != NULL)
+    ABR x = y->gauche;
+    ABR T2 = x->droit;
+
+    // effectuer rotation
+    x->droit = y;
+    y->gauche = T2;
+
+    //  mise à jour hauteur
+    y->hauteur = max(get_hauteur(y->gauche), get_hauteur(y->droit)) + 1;
+    x->hauteur = max(get_hauteur(x->gauche), get_hauteur(x->droit)) + 1;
+
+    // Return nouveau racine
+    return x;
+}
+
+ABR leftRotate(ABR x)
+{
+    ABR y = x->droit;
+    ABR T2 = y->gauche;
+
+    // effectuer rotation
+    y->gauche = x;
+    x->droit = T2;
+
+    //  mise à jour hauteur
+    x->hauteur = max(get_hauteur(x->gauche), get_hauteur(x->droit)) + 1;
+    y->hauteur = max(get_hauteur(y->gauche), get_hauteur(y->droit)) + 1;
+
+    // Return nouveau racine
+    return y;
+}
+
+
+ABR reequilibrer(ABR A, ABR nouveau)
+{
+    /* Obtenez le facteur d'équilibre de cet ancêtre
+          nœud pour vérifier si ce nœud est devenu
+          déséquilibré */
+    int facteur = desequilibre(A);
+
+    // cas: gauche gauche
+    if (facteur > 1 && strcasecmp(A->gauche->mot, nouveau->mot) > 0)
+        return rightRotate(A);
+
+    // cas: droit droit
+    if (facteur < -1 && strcasecmp(A->droit->mot, nouveau->mot) < 0)
+        return leftRotate(A);
+
+    // cas: gauche droit
+    if (facteur > 1 && strcasecmp(A->gauche->mot, nouveau->mot) < 0)
     {
-        int d = desequilibre(A);
-
-        if (d == 2)
-        {
-            d = desequilibre(A->gauche);
-            if (d == 1)
-            {
-                rotationD(A);
-            }
-            else if (d == -1)
-            {
-                rotationGD(A);
-            }
-        }
-        else if (d == -2)
-        {
-            d = desequilibre(A->gauche);
-            if (d == 1)
-            {
-                rotationG(A);
-            }
-            else if (d == -1)
-            {
-                rotationDG(A);
-            }
-        }
+        A->gauche = leftRotate(A->gauche);
+        return rightRotate(A);
     }
+
+    // cas: droit gauche
+    if (facteur < -1 && strcasecmp(A->droit->mot, nouveau->mot) > 0)
+    {
+        A->droit = rightRotate(A->droit);
+        return leftRotate(A);
+    }
+    return A;
 }
 
 ABR creer_nouveau_noeud(char *mot, int occurrence, int ligne, int hauteur)
@@ -150,8 +182,7 @@ ABR creer_nouveau_noeud(char *mot, int occurrence, int ligne, int hauteur)
     ABR e = malloc(sizeof(noeud));
     e->droit = NULL;
     e->gauche = NULL;
-    e->mot = malloc(strlen(mot));
-    strcpy(e->mot, mot);
+    e->mot = mot;
     e->lignes = creer_liste(ligne);
     e->occurrence = occurrence;
     e->hauteur = hauteur;
@@ -164,26 +195,27 @@ void maj_noeud(ABR e, int ligne)
     ajouter_element(e->lignes, ligne);
 }
 
+
+
 ABR inserer_noeud(ABR A, ABR nouveau)
 {
     /* 1. Effectuer l'insertion ABR normale */
     if (A == NULL)
-    {
         return nouveau;
-    }
-    if (comparer(A->mot, nouveau->mot) > 0)
+
+    if (strcasecmp(A->mot, nouveau->mot) > 0)
         A->gauche = inserer_noeud(A->gauche, nouveau);
-    else if (comparer(A->mot, nouveau->mot) < 0)
+    else if (strcasecmp(A->mot, nouveau->mot) < 0)
         A->droit = inserer_noeud(A->droit, nouveau);
-    else // Egale
-    { 
-        maj_noeud(A, nouveau->lignes[0].ligne);
+    else // mise à jour de l'occurrence de ce mot avec l'ajout de nouveau ligne
+    {
+        maj_noeud(A, nouveau->lignes->ligne);
         return A;
     }
-    /* 2. Mettre à jour la hauteur de ce nœud ancêtre */
-    maj_Hauteur(A);
 
-    reequilibrer(A);
+    /* 2. Mettre à jour la hauteur de cet ancêtre nœud */
+    A->hauteur = 1 + max(get_hauteur(A->gauche),
+                         get_hauteur(A->droit));
 
-    return A;
+    return reequilibrer(A, nouveau);
 }

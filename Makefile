@@ -44,6 +44,8 @@ RM = rm -f
 MD	:= mkdir -p
 endif
 
+TXTFILE := file.txt
+
 # define any directories containing header files other than /usr/include
 INCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
 
@@ -65,6 +67,7 @@ OBJECTS		:= $(SOURCES:.c=.o)
 OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 
 all: $(OUTPUT) $(MAIN)
+	./$(OUTPUT)/$(MAIN) $(TXTFILE)
 	@echo Executing 'all' complete!
 
 $(OUTPUT):

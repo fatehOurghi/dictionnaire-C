@@ -13,15 +13,15 @@ int est_equilibreABR(ABR A);
 
 int desequilibre(ABR A);
 
-void rotationG(ABR A);
+ABR rotationG(ABR A);
 
-void rotationD(ABR A);
+ABR rotationD(ABR A);
 
-void rotationDG(ABR A);
+ABR rotationDG(ABR A);
 
-void rotationGD(ABR A);
+ABR rotationGD(ABR A);
 
-void reequilibrer(ABR A);
+ABR reequilibrer(ABR A, ABR nouveau);
 
 ABR creer_nouveau_noeud(char *mot, int occurrence, int pre_citation, int hauteur);
 

@@ -3,7 +3,7 @@
 
 Liste creer_liste(int debut)
 {
-    Liste liste = malloc(sizeof(Liste));
+    Liste liste = malloc(sizeof(element));
     liste->ligne = debut;
     liste->suiv = NULL;
     return liste;

@@ -7,7 +7,7 @@
 char *lire_mot(Texte texte, int *debut, int *ligne)
 {
     char *chaine = texte.T;
-    int taille = texte.nombre_char;
+    long taille = texte.nombre_char;
     if (*debut < 0 || *debut >= taille || chaine == NULL)
         return NULL;
 
@@ -26,22 +26,53 @@ char *lire_mot(Texte texte, int *debut, int *ligne)
         return NULL;
 
     // debut de mot trouvé
-    char *mot = (char *)malloc(sizeof(char));
-    mot[0] = '\0';
-    while (appartenir_alphabet(c) == 1 && indice < taille)
+    char *mot = (char *)malloc(100 * sizeof(char));
+    mot[0] = c;
+    int i = 1;
+    while (1)
     {
-        strncat(mot, &c, 1);
-        c = chaine[indice++];
-        if (c == '\n')
-            (*ligne)++;
+        if (appartenir_alphabet(c) == 1 && indice < taille)
+        {
+            c = chaine[indice++];
+            mot[i++] = c;
+        }
+        else
+        {
+            if(c=='\n')
+                indice--;
+            break;
+        }
     }
+    mot[i - 1] = '\0';
     *debut = indice;
     return mot;
 }
 
 int appartenir_alphabet(char c)
 {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+    if (((int)c >= (int)'a' && (int)c <= (int)'z') || ((int)c >= (int)'A' && (int)c <= (int)'Z'))
         return 1;
     return 0;
+}
+
+Texte initialiser_texte()
+{
+    Texte texte;
+    texte.A = NULL;
+    texte.L = NULL;
+    texte.T = NULL;
+    texte.nombre_char = 0;
+    texte.nombre_lignes = 0;
+    return texte;
+}
+
+Texte remplir_texte(char *T, int *L, long n_car, int lignes)
+{
+    Texte texte;
+    texte.A = NULL;
+    texte.L = L;
+    texte.T = T;
+    texte.nombre_char = n_car;
+    texte.nombre_lignes = lignes;
+    return texte;
 }
